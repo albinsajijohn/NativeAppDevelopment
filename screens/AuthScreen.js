@@ -1,9 +1,10 @@
-// screens/AuthScreen.js
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import { auth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from '../config/firebase';
+import { useAuth } from '../context/AuthContext';
 
 const AuthScreen = ({ navigation }) => {
+  const { user } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSignUp, setIsSignUp] = useState(true);
@@ -59,16 +60,20 @@ const AuthScreen = ({ navigation }) => {
         onChangeText={setPassword}
         secureTextEntry
       />
-      <Button
-        title={isLoading ? (isSignUp ? 'Creating Account...' : 'Logging In...') : (isSignUp ? 'SIGN UP' : 'LOGIN')}
-        onPress={handleAuth}
-        disabled={isLoading}
-      />
-      <Button
-        title={isSignUp ? 'Already have an account? LOGIN' : 'Need an account? SIGN UP'}
-        onPress={() => setIsSignUp(!isSignUp)}
-        disabled={isLoading}
-      />
+      {isLoading ? (
+        <ActivityIndicator size="large" color="#0000ff" />
+      ) : (
+        <>
+          <Button
+            title={isSignUp ? 'SIGN UP' : 'LOGIN'}
+            onPress={handleAuth}
+          />
+          <Button
+            title={isSignUp ? 'Already have an account? LOGIN' : 'Need an account? SIGN UP'}
+            onPress={() => setIsSignUp(!isSignUp)}
+          />
+        </>
+      )}
     </View>
   );
 };
@@ -79,14 +84,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
-    backgroundColor:'indigo'
+    backgroundColor: 'indigo',
   },
   header: {
     fontSize: 50,
-    fontWeight: 'bold',   
-    color: 'white',    
+    fontWeight: 'bold',
+    color: 'white',
     marginBottom: 20,
-   
   },
   input: {
     width: '100%',
